@@ -24,7 +24,7 @@ namespace OrderCloud.Integrations.EnvironmentSeed.Commands
 
         public async Task UploadTranslationsFiles()
         {
-            var path = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"wwwroot\i18n"));
+            var path = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"wwwroot/i18n"));
             var files = Directory.GetFiles(path, "*.json");
 
             foreach (var file in files)

@@ -47,6 +47,7 @@ export class ProductService extends ResourceCrudService<Product> {
         ProductType: null,
         FreeShipping: false,
         FreeShippingMessage: 'Free Shipping',
+        IsDigital: false,
       },
     },
     PriceSchedule: {

@@ -324,6 +324,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
             _get(superHSProduct.Product, 'xp.FreeShippingMessage') ||
               'Free Shipping'
           ),
+          IsDigital: new FormControl(_get(superHSProduct.Product, 'xp.IsDigital')),
         },
         { validators: ValidateMinMax }
       )
@@ -587,6 +588,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
       'Product.Inventory.OrderCanExceed',
       'Product.Inventory.VariantLevelTracking',
       'Product.xp.FreeShipping',
+      'Product.xp.IsDigital',
     ]
     const productUpdate = {
       field,

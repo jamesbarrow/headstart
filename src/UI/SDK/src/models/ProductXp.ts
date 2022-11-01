@@ -16,4 +16,5 @@ export interface ProductXp {
     Documents?: DocumentAsset[]
     RelatedProducts?: string[]
     BundledProducts?: string[]
+    IsDigital?: boolean
 }

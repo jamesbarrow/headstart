@@ -1,4 +1,12 @@
 <div class="container my-4" *ngIf="_product">
+  <div
+    class="alert alert-warning"
+    role="alert"
+    *ngIf="_product?.xp?.IsDigital"
+    translate
+  >
+    PRODUCTS.DETAILS.IS_DIGITAL_MESSAGE
+  </div>
   <div class="row mb-5">
     <div [ngClass]="specs?.length > 3 ? 'col-md-4' : 'col-md-5'">
       <ocm-image-gallery
@@ -199,7 +207,7 @@
         </div>
       </ng-container>
       <ng-container *ngIf="isBundle">
-        <h5>Included in Bundle: </h5>
+        <h5>Included in Bundle:</h5>
         <div class="container">
           <div class="row">
             <div

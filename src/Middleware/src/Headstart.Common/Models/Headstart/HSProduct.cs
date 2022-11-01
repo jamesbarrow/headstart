@@ -86,6 +86,8 @@ namespace Headstart.Common.Models
         public List<string> RelatedProducts { get; set; }
 
         public List<string> BundledProducts { get; set; }
+
+        public bool IsDigital { get; set; }
     }
 
     public class ImageAsset

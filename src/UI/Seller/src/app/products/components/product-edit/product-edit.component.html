@@ -253,6 +253,25 @@
                       <span class="slider round"></span>
                     </label>
                   </div>
+                  <div class="form-group">
+                    <label for="IsDigital" translate
+                      >ADMIN.PRODUCT_EDIT.IS_DIGITAL</label
+                    >
+                    <label class="d-block switch mb-0">
+                      <input
+                        class="form-check-input"
+                        [attr.disabled]="readonly ? true : null"
+                        type="checkbox"
+                        (click)="
+                          handleUpdateProduct($event, 'Product.xp.IsDigital')
+                        "
+                        [checked]="
+                          _superHSProductEditable?.Product?.xp?.IsDigital
+                        "
+                      />
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
                 </div>
                 <!-- Unit Of Measure -->
                 <div class="card bg-white shadow-sm p-4 mt-3">
