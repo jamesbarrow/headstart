@@ -97,7 +97,34 @@
         aria-haspopup="true"
         aria-expanded="false"
       >
-        <span>{{selectedLanguage}}</span>
+        <span>{{ selectedMarketplace }}</span>
+      </a>
+    </div>
+    <div
+      class="dropdown-menu"
+      aria-labelledby="language-dropdown"
+      ngbDropdownMenu
+    >
+      <a
+        *ngFor="let mkp of marketplaceOptions"
+        class="dropdown-item"
+        (click)="setMarketplace(mkp)"
+        translate
+      >
+        {{ mkp }}
+      </a>
+    </div>
+  </div>
+  <div class="nav-item dropdown cursor-pointer" ngbDropdown>
+    <div>
+      <a
+        class="nav-link navbarDropdown"
+        data-toggle="dropdown"
+        ngbDropdownToggle
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        <span>{{ selectedLanguage }}</span>
       </a>
     </div>
     <div
@@ -111,7 +138,7 @@
         (click)="setLanguage(lang)"
         translate
       >
-        {{lang}}
+        {{ lang }}
       </a>
     </div>
   </div>

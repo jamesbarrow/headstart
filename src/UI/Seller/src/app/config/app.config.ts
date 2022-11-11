@@ -1,7 +1,10 @@
-import { InjectionToken } from '@angular/core'
-import { environment } from '../../environments/environment.local'
+import {inject, InjectionToken } from '@angular/core'
+import { Router } from '@angular/router'
+//import { environment } from '../../environments/environment.local'
+import { environment } from '../../environments/environment.multimarketplace.local'
 import { ApiRole } from 'ordercloud-javascript-sdk'
 import { AppConfig } from '@app-seller/models/environment.types'
+import { CookieService } from '../shared/services/cookie.service'
 
 export const ocAppConfig: AppConfig = {
   appname: environment.appname,
@@ -111,10 +114,49 @@ export const ocAppConfig: AppConfig = {
   ],
 }
 
+export const marketplaces: AppConfig[] = [];
+
+environment.marketplaces.forEach(element => {
+  let marketplace = (JSON.parse(JSON.stringify(ocAppConfig)));
+  marketplace.clientID = element.clientID;
+  marketplace.marketplaceID = element.marketplaceID;
+  marketplace.marketplaceName = element.marketplaceName;
+  marketplaces.push(marketplace);
+});
+
+//export class AppConfigResolver implements Resolve<AppConfig> {
+  export class AppConfigResolver {
+  constructor(private cookieService: CookieService) {
+  }
+
+  appConfigFactory(){
+
+    let activeMarketplace = this.cookieService.getCookie('mk-test');
+
+    console.log('app config cookie: '+activeMarketplace);
+
+    if(activeMarketplace !== ''){
+      var result = marketplaces.filter(obj => {
+        //console.log('test: '+obj.marketplaceName);
+        return obj.marketplaceName == activeMarketplace;
+      })
+      if(result && result[0]){
+        console.log('loading cookie forced config: '+result[0].marketplaceName);
+        return result[0];
+      }
+    }
+
+    console.log('loading default config: '+ocAppConfig.marketplaceName);
+
+    return ocAppConfig;
+  }
+}
+
 export const applicationConfiguration = new InjectionToken<AppConfig>(
   'app.config',
   {
     providedIn: 'root',
-    factory: () => ocAppConfig,
+    factory: () => { return new AppConfigResolver(inject(CookieService)).appConfigFactory() },
+    //factory: () => { return ocAppConfig }
   }
 )

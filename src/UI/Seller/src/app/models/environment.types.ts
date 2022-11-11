@@ -1,7 +1,14 @@
 import { ApiRole } from 'ordercloud-javascript-sdk'
 
+export interface MarketplaceConfig {
+  marketplaceID: string
+  marketplaceName: string
+  clientID: string
+}
+
 export interface EnvironmentConfig {
   hostedApp: boolean
+  marketplaces?: MarketplaceConfig[]
   marketplaceID: string
   marketplaceName: string
   clientID: string

@@ -18,12 +18,20 @@ import { AppAuthService } from '@app-seller/auth/services/app-auth.service'
 import { CurrentUserService } from '@app-seller/shared/services/current-user/current-user.service'
 import { TranslateService } from '@ngx-translate/core'
 import { LanguageSelectorService } from '@app-seller/shared'
+import { CookieService } from '@app-seller/shared/services/cookie.service'
+import { marketplaces } from '@app-seller/config/app.config'
 
 @Component({
   selector: 'layout-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
+/*
+@Component({
+  selector: 'Layout-header',
+  templateUrl: './sidebars/sidebars.component.html',
+  styleUrls: ['./sidebars/sidebars.component.css'],
+})*/
 export class HeaderComponent implements OnInit {
   user: MeUser
   organizationName: string
@@ -43,6 +51,8 @@ export class HeaderComponent implements OnInit {
   currentUserInitials: string
   selectedLanguage: string
   languages: string[]
+  selectedMarketplace: string
+  marketplaceOptions: string[]
 
   constructor(
     private router: Router,
@@ -51,6 +61,7 @@ export class HeaderComponent implements OnInit {
     private currentUserService: CurrentUserService,
     private translate: TranslateService,
     private languageService: LanguageSelectorService,
+    private cookieService: CookieService,
     @Inject(applicationConfiguration) protected appConfig: AppConfig
   ) {
     this.setUpSubs()
@@ -69,6 +80,16 @@ export class HeaderComponent implements OnInit {
     this.translate.onLangChange.subscribe((event) => {
       this.selectedLanguage = event.lang
     })
+
+    this.marketplaceOptions = marketplaces.map((mkp) => mkp.marketplaceName);
+    //marketplace
+    let selectedMkPlace = this.cookieService.getCookie('mk-test')
+    if(selectedMkPlace !== ''){
+      this.selectedMarketplace = selectedMkPlace
+    }
+    else{
+      this.selectedMarketplace = this.appConfig.marketplaceName
+    }
   }
 
   async getCurrentUser(): Promise<void> {
@@ -118,6 +139,12 @@ export class HeaderComponent implements OnInit {
 
   toAccount(): void {
     this.router.navigate(['account'])
+  }
+
+  async setMarketplace(marketplace: string): Promise<void> {
+    //set cookie
+    this.cookieService.setCookie({ name: 'mk-test', value: marketplace })
+    window.location = window.location;
   }
 
   async setLanguage(language: string): Promise<void> {

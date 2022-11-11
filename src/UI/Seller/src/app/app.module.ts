@@ -32,6 +32,7 @@ import { AuthModule } from './auth/auth.module'
 import { AppRoutingModule } from './app-routing.module'
 import { RouterModule } from '@angular/router'
 import { LanguageSelectorService } from '@app-seller/shared'
+import { CookieService } from './shared/services/cookie.service'
 
 export function HttpLoaderFactory(
   http: HttpClient,
@@ -79,6 +80,7 @@ export enum OrdercloudEnv {
   providers: [
     { provide: ocAppConfig, useValue: ocAppConfig },
     { provide: ErrorHandler, useClass: AppErrorHandler },
+    CookieService
   ],
   bootstrap: [AppComponent],
 })

@@ -1,0 +1,17 @@
+[
+  {
+    "marketplaceID": "d5eb36c2-2406-428d-b6e9-515fe8e73156",
+    "marketplaceName": "TEST1",
+    "clientID": "B461789F-414B-46CF-88D0-04022DCAFB94"
+  },
+  {
+    "marketplaceID": "d5eb36c2-2406-428d-b6e9-515fe8e73156",
+    "marketplaceName": "TEST2",
+    "clientID": "B461789F-414B-46CF-88D0-04022DCAFB94"
+  },
+  {
+    "marketplaceID": "d5eb36c2-2406-428d-b6e9-515fe8e73156",
+    "marketplaceName": "TEST3",
+    "clientID": "B461789F-414B-46CF-88D0-04022DCAFB94"
+  }
+]
