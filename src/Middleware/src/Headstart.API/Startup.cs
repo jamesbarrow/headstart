@@ -80,8 +80,6 @@ namespace Headstart.API
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            var clientIDs = settings.OrderCloudSettings.ClientIDsWithAPIAccess.Split(",");
-
             var cosmosConfig = new CosmosConfig(
                 settings.CosmosSettings.DatabaseName,
                 settings.CosmosSettings.EndpointUri,
@@ -134,6 +132,9 @@ namespace Headstart.API
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
             });
 
+            //MULTI-MARKETPLACE - get all client ID's as valid for all marketplaces - in practice, maybe do this as transient and add them separately per context.
+            var clientIDs = settings.OrderCloudMarketplaceSettings.Select(x => x.ClientIDsWithAPIAccess).Aggregate((c, n) => $"{c},{n}").Split(",");
+
             services
                 .AddCors(o => o.AddPolicy("integrationcors", builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); }))
                 .AddSingleton<ISimpleCache, LazyCacheService>() // Replace LazyCacheService with RedisService if you have multiple server instances.
@@ -145,7 +146,9 @@ namespace Headstart.API
                 .AddSingleton(x => settings.StorageAccountSettings)
 
                 // Configure OrderCloud
-                .InjectOrderCloud<IOrderCloudClient>(settings.OrderCloudSettings)
+                //.InjectOrderCloud<IOrderCloudClient>(settings.OrderCloudSettings)
+                //MULTI-MARKETPLACE -
+                .InjectOrderCloudToResolver<IOrderCloudClient>(settings.OrderCloudMarketplaceSettings)
                 .AddOrderCloudUserAuth(opts => opts.AddValidClientIDs(clientIDs))
                 .AddOrderCloudWebhookAuth(opts => opts.HashKey = settings.OrderCloudSettings.WebhookHashKey)
 
@@ -154,6 +157,8 @@ namespace Headstart.API
                 .AddCosmosDb(settings.CosmosSettings.EndpointUri, settings.CosmosSettings.PrimaryKey, settings.CosmosSettings.DatabaseName, cosmosContainers)
 
                 // Commands
+                //MULTI-MARKETPLACE - must be transient because of the changing order cloud marketplace
+                .AddTransient<IOpenIdConnectCommand, OpenIdConnectCommand>()
                 .Inject<ICheckoutIntegrationCommand>()
                 .Inject<IShipmentCommand>()
                 .Inject<IOrderCommand>()
@@ -178,9 +183,10 @@ namespace Headstart.API
                 .AddDefaultTranslationsProvider(settings.StorageAccountSettings)
 
                 // Tax Providers
-                .AddAvalaraTaxProvider(settings.EnvironmentSettings, settings.AvalaraSettings)
-                .AddTaxJarTaxProvider(settings.EnvironmentSettings, settings.TaxJarSettings)
-                .AddVertexTaxProvider(settings.EnvironmentSettings, settings.VertexSettings)
+                //MULTI-MARKETPLACE - commented out
+                //.AddAvalaraTaxProvider(settings.EnvironmentSettings, settings.AvalaraSettings)
+                //.AddTaxJarTaxProvider(settings.EnvironmentSettings, settings.TaxJarSettings)
+                //.AddVertexTaxProvider(settings.EnvironmentSettings, settings.VertexSettings)
                 .AddMockTaxProvider()
 
                 // CMS Providers
@@ -227,12 +233,13 @@ namespace Headstart.API
                 .AddSwaggerGenNewtonsoftSupport();
 
             var serviceProvider = services.BuildServiceProvider();
-            services
-                .AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
-                {
-                    EnableAdaptiveSampling = false, // retain all data
-                    InstrumentationKey = settings.ApplicationInsightsSettings.InstrumentationKey,
-                });
+            //MULTI-MARKETPLACE - commented
+            //services
+            //.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
+            //{
+            //    EnableAdaptiveSampling = false, // retain all data
+            //    InstrumentationKey = settings.ApplicationInsightsSettings.InstrumentationKey,
+            //});
 
             ServicePointManager.DefaultConnectionLimit = int.MaxValue;
 

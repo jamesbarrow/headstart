@@ -6,6 +6,7 @@ class Configuration {
     orderCloudApiUrl: 'https://sandboxapi.ordercloud.io',
     timeoutInMilliseconds: 120 * 1000, // 120 seconds by default
     clientID: null,
+    marketplaceName: null,
     cookieOptions: {
       samesite: 'lax', // browser default
       secure: false,

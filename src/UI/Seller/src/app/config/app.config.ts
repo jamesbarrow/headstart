@@ -18,6 +18,7 @@ export const ocAppConfig: AppConfig = {
   blobStorageUrl: environment.blobStorageUrl,
   // marketplaceName is being hard-coded until this is available to store in OrderCloud
   marketplaceName: environment.marketplaceName,
+  apiClientID: '',
   scope: [
     // 'AdminAddressReader' is just for reading admin addresses as a seller user on product create/edti
     // Will need to be updated to 'AdminAddressAdmin' when seller address create is implemented
@@ -120,6 +121,7 @@ environment.marketplaces.forEach(element => {
   let marketplace = (JSON.parse(JSON.stringify(ocAppConfig)));
   marketplace.clientID = element.clientID;
   marketplace.marketplaceID = element.marketplaceID;
+  marketplace.apiClientID = element.apiClientID;
   marketplace.marketplaceName = element.marketplaceName;
   marketplaces.push(marketplace);
 });
@@ -157,6 +159,11 @@ export const applicationConfiguration = new InjectionToken<AppConfig>(
   {
     providedIn: 'root',
     factory: () => { return new AppConfigResolver(inject(CookieService)).appConfigFactory() },
-    //factory: () => { return ocAppConfig }
+    //factory: (router: Router) => {
+      //marketplaces
+
+      //return ocAppConfig;
+    //}
   }
 )
+

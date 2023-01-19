@@ -3,11 +3,13 @@ import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 
 // auth components
+import { SSOComponent } from '@app-seller/auth/containers/sso/sso.component'
 import { LoginComponent } from '@app-seller/auth/containers/login/login.component'
 import { ForgotPasswordComponent } from '@app-seller/auth/containers/forgot-password/forgot-password.component'
 import { ResetPasswordComponent } from '@app-seller/auth/containers/reset-password/reset-password.component'
 
 const routes: Routes = [
+  { path: 'sso', component: SSOComponent },
   { path: 'login', component: LoginComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },

@@ -88,12 +88,18 @@ export class AppModule {
   constructor(
     @Inject(applicationConfiguration) private appConfig: AppConfig,
     public translate: TranslateService,
-    private languageService: LanguageSelectorService
+    private languageService: LanguageSelectorService,
+    private cookieService: CookieService
   ) {
+
+    console.log('******** - Initialising AppModule');
+    let marketplaceName = this.cookieService.getCookie('mk-test');
+
     HeadstartConfiguration.Set({
       baseApiUrl: this.appConfig.middlewareUrl,
       orderCloudApiUrl: this.appConfig.orderCloudApiUrl,
       clientID: this.appConfig.clientID,
+      marketplaceName: marketplaceName,
       cookieOptions: {
         prefix: this.appConfig.appname.replace(/ /g, '_').toLowerCase(),
       },

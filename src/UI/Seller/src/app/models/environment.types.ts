@@ -4,6 +4,7 @@ export interface MarketplaceConfig {
   marketplaceID: string
   marketplaceName: string
   clientID: string
+  apiClientID: string
 }
 
 export interface EnvironmentConfig {
@@ -50,6 +51,9 @@ export interface AppConfig {
    */
   marketplaceID: string
   clientID: string
+
+  /*SSO Support - used for login URL*/
+  apiClientID: string
   /**
    * base path to middleware
    */

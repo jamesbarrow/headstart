@@ -22,6 +22,8 @@ export interface SdkConfiguration {
    */
   clientID?: string
 
+  /*Multi marketplace suppport*/
+  marketplaceName?: string
   /**
    * specifies the number of milliseconds before the request times out.
    * If the request takes longer than `timeoutInMilliseconds`, the request will be aborted.

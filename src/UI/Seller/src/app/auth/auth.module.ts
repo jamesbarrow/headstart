@@ -9,10 +9,12 @@ import { ResetPasswordComponent } from '@app-seller/auth/containers/reset-passwo
 
 // routing
 import { AuthRoutingModule } from '@app-seller/auth/auth-routing.module'
+import { SSOComponent } from './containers/sso/sso.component'
 
 @NgModule({
   imports: [AuthRoutingModule, SharedModule],
   declarations: [
+    SSOComponent,
     LoginComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,

@@ -44,4 +44,9 @@ export class LoginComponent implements OnInit {
     }
     this.router.navigateByUrl('/home')
   }
+
+  onSSOClick(marketplace: string) {
+    console.log('login triggered to marketplace', marketplace)
+    this.currentUserService.changeMarketplace(marketplace).then(() => this.currentUserService.getSSORedirect(marketplace).then((redirectUrl) => {window.location.href = redirectUrl}))
+  }
 }

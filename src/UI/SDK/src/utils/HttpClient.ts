@@ -158,6 +158,13 @@ class HttpClient {
         'Content-Type': 'application/json',
       },
     }
+
+    //multi marketplace support
+    if(sdkConfig.marketplaceName != null){
+      console.log('http client (marketplace) - '+sdkConfig.marketplaceName);
+      requestConfig.headers['marketplaceName'] = sdkConfig.marketplaceName;
+    }
+
     return this._addTokenToConfig(requestConfig)
   }
 }

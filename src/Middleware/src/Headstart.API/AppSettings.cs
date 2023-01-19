@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Headstart.Common.Settings;
 using OrderCloud.Integrations.Avalara;
 using OrderCloud.Integrations.AzureStorage;
@@ -29,6 +30,9 @@ namespace Headstart.API
         public FlurlSettings FlurlSettings { get; set; } = new FlurlSettings();
 
         public OrderCloudSettings OrderCloudSettings { get; set; } = new OrderCloudSettings();
+
+        //multi marketplace support
+        public List<OrderCloudSettings> OrderCloudMarketplaceSettings { get; set; } = new List<OrderCloudSettings>();
 
         public SendGridSettings SendgridSettings { get; set; } = new SendGridSettings();
 

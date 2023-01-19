@@ -3,7 +3,8 @@
 const brand = Brand.DEFAULT_ADMIN
 const appEnvironment = Environment.TEST
 const useLocalMiddleware = true
-const localMiddlewareURL = 'http://api.headstart.localhost'
+//const localMiddlewareURL = 'http://api.headstart.localhost'
+const localMiddlewareURL = 'https://localhost:44373'
 // ====================================================================
 // ======= UNLESS YOU ARE DOING SOMETHING WEIRD =======================
 

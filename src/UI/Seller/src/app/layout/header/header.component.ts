@@ -69,9 +69,10 @@ export class HeaderComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.headerConfig = getHeaderConfig(
-      this.appAuthService.getUserRoles(),
+      await this.appAuthService.getUserRoles(),
       this.appAuthService.getOrdercloudUserType()
     )
+    console.log('USER ROLES IN HEADER', this.appAuthService.getUserRoles());
     await this.getCurrentUser()
     this.setCurrentUserInitials(this.user)
     this.urlChange(this.router.url)
@@ -143,8 +144,11 @@ export class HeaderComponent implements OnInit {
 
   async setMarketplace(marketplace: string): Promise<void> {
     //set cookie
-    this.cookieService.setCookie({ name: 'mk-test', value: marketplace })
-    window.location = window.location;
+    //this.cookieService.setCookie({ name: 'mk-test', value: marketplace });
+    //logging out is the easiest way to handle this.
+    this.appAuthService.baseLogout();
+    this.currentUserService.changeMarketplace(marketplace).then(() => this.currentUserService.getSSORedirect(marketplace).then((redirectUrl) => {window.location.href = redirectUrl}))
+    //window.location = window.location;
   }
 
   async setLanguage(language: string): Promise<void> {

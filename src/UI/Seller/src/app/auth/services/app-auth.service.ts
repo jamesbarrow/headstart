@@ -12,11 +12,12 @@ import { CookieService } from 'ngx-cookie'
 import * as jwtDecode from 'jwt-decode'
 import { keys as _keys } from 'lodash'
 import { LanguageSelectorService } from '@app-seller/shared'
-import { DecodedToken, Tokens } from 'ordercloud-javascript-sdk'
+import { DecodedToken, Tokens, Me, MeUser } from 'ordercloud-javascript-sdk'
 @Injectable({
   providedIn: 'root',
 })
 export class AppAuthService {
+  me: MeUser
   private rememberMeCookieName = `${this.appConfig.appname
     .replace(/ /g, '_')
     .toLowerCase()}_rememberMe`
@@ -43,8 +44,22 @@ export class AppAuthService {
     return decodedToken
   }
 
-  getUserRoles(): string[] {
-    const roles = this.getRolesFromToken()
+  async getUserRoles(): Promise<string[]> {
+    let roles = this.getRolesFromToken()
+
+    console.log('roles', roles)
+    let hsRoles = roles.filter((val) => {return val.startsWith('HS')})
+    console.log('HS Roles', hsRoles)
+    if(hsRoles.length == 0){
+      let serverRoles = await this.getRolesFromMe()
+      roles = roles.concat(serverRoles);
+      /*this.getRolesFromMe().then((rolesValue) => {
+        roles = rolesValue
+        console.log('GETTING CLIENT ROLES', roles)
+      })*/
+      //roles = await this.getRolesFromMe()
+    }
+    console.log('GETTING CLIENT ROLES 2', roles)
     return roles
   }
 
@@ -61,10 +76,32 @@ export class AppAuthService {
       : decodedToken.role
   }
 
+  //multi marketplaces
+  async getRolesFromMe(): Promise<string[]> {
+    //we need to use the me call to the API.
+    this.me = await Me.Get()
+
+    return this.me.AvailableRoles
+  }
+
   getUsrTypeFromToken(): string {
     const decodedToken: DecodedToken = this.getDecodedToken()
     return decodedToken.usrtype
   }
+
+  //multimarketplace logout - logout but no redirect.
+  baseLogout(): void {
+    const cookiePrefix = this.appConfig.appname.replace(/ /g, '_').toLowerCase()
+    const appCookieNames = _keys(this.cookieService.getAll())
+    appCookieNames.forEach((cookieName) => {
+      if (cookieName.includes(cookiePrefix)) {
+        this.cookieService.remove(cookieName)
+      }
+    })
+    this.appStateService.isLoggedIn.next(false)
+    this.languageService.SetTranslateLanguage()
+  }
+
 
   async logout(): Promise<void> {
     const cookiePrefix = this.appConfig.appname.replace(/ /g, '_').toLowerCase()

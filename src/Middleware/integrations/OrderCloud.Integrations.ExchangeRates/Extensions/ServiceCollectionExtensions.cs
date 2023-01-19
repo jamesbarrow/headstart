@@ -25,7 +25,7 @@ namespace OrderCloud.Integrations.ExchangeRates.Extensions
             };
 
             services
-                .AddSingleton<ICurrencyConversionCommand>(provider => new ExchangeRatesCommand(
+                .AddTransient<ICurrencyConversionCommand>(provider => new ExchangeRatesCommand(
                     provider.GetService<IOrderCloudClient>(),
                     new CloudBlobService(currencyConfig),
                     provider.GetService<ICurrencyConversionService>(),

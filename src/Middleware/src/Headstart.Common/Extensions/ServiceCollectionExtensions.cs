@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Headstart.Common.Commands;
 using Headstart.Common.Services;
 using Headstart.Common.Settings;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using OrderCloud.SDK;
@@ -33,8 +35,83 @@ namespace Headstart.Common.Extensions
 
             foreach (var m in mappings)
             {
-                services.AddSingleton(m.iface, m.impl);
+                //don't override specific registration
+                if (!services.Any(x => x.ServiceType == m.iface))
+                {
+                    services.AddSingleton(m.iface, m.impl);
+                }
             }
+
+            return services;
+        }
+
+        public static IServiceCollection InjectOrderCloudToResolver<T>(this IServiceCollection services, List<OrderCloudSettings> orderCloudSettings)
+        {
+            //we don't need a resolver with one instance registered
+            //if (orderCloudSettings.Count == 1)
+            //{
+            //    services.AddSingleton<IOrderCloudClient>(provider => new OrderCloudClient(new OrderCloudClientConfig
+            //    {
+            //        ApiUrl = orderCloudSettings[0].ApiUrl,
+            //        AuthUrl = orderCloudSettings[0].ApiUrl,
+            //        ClientId = orderCloudSettings[0].MiddlewareClientID,
+            //        ClientSecret = orderCloudSettings[0].MiddlewareClientSecret,
+            //        Roles = new[] { ApiRole.FullAccess },
+            //    }));
+            //    return services;
+            //}
+
+            var clientResolver = new OrderCloudClientResolver();
+            foreach (var orderCloudSetting in orderCloudSettings)
+            {
+                clientResolver.Register(orderCloudSetting.MarketplaceName, new OrderCloudClient(new OrderCloudClientConfig
+                {
+                    ApiUrl = orderCloudSetting.ApiUrl,
+                    AuthUrl = orderCloudSetting.ApiUrl,
+                    ClientId = orderCloudSetting.MiddlewareClientID,
+                    ClientSecret = orderCloudSetting.MiddlewareClientSecret,
+                    Roles = new[] { ApiRole.FullAccess },
+                }));
+            }
+
+            // Configure OrderCloud
+            services.AddSingleton<IOrderCloudClientResolver>(clientResolver);
+
+            services.AddTransient<IOrderCloudClient>(provider =>
+            {
+                var orderCloudClientResolver = provider.GetService(typeof(IOrderCloudClientResolver)) as IOrderCloudClientResolver;
+                if (orderCloudClientResolver == null)
+                    throw new Exception("The Order Cloud Client Resolver has can not be found in the service dependencies");
+
+                var request = provider.GetService<IHttpContextAccessor>()?.HttpContext?.Request;
+                string currentContextMarketplace = string.Empty;
+                if (request != null)
+                {
+                    if (request.Method == "POST" && request.Path.Value.Contains("mktp-"))
+                    {
+                        var url = request.Path.Value.Split('/');
+                        var identifier = url.FirstOrDefault(x => x.StartsWith("mktp-"));
+                        if (!string.IsNullOrEmpty(identifier))
+                        {
+                            currentContextMarketplace = identifier.Substring("mktp-".Length);
+                        }
+                    }
+
+
+                    if (string.IsNullOrEmpty(currentContextMarketplace))
+                        currentContextMarketplace = provider.GetService<IHttpContextAccessor>()?.HttpContext?.Request?.Headers["marketplacename"];
+                }
+
+                //get the marketplace name
+                //var currentContextMarketplace = provider.GetService<IHttpContextAccessor>()?.HttpContext?.Request?.Headers["marketplacename"];
+
+                if (string.IsNullOrEmpty(currentContextMarketplace))
+                    //throw new Exception("No marketplace found in the Http Header");
+                    return orderCloudClientResolver.Resolve("MultiMarketplace1");
+                //temporary as we can't send this info yet.
+
+                return orderCloudClientResolver.Resolve(currentContextMarketplace);
+            });
 
             return services;
         }
@@ -69,8 +146,8 @@ namespace Headstart.Common.Extensions
 
         public static IServiceCollection AddMockTaxProvider(this IServiceCollection services)
         {
-            services.TryAddSingleton<ITaxCodesProvider, MockTaxService>();
-            services.TryAddSingleton<ITaxCalculator, MockTaxService>();
+            services.TryAddTransient<ITaxCodesProvider, MockTaxService>();
+            services.TryAddTransient<ITaxCalculator, MockTaxService>();
 
             return services;
         }
