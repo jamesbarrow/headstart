@@ -1,14 +1,14 @@
 [
   {
-    "marketplaceID": "d5eb36c2-2406-428d-b6e9-515fe8e73156",
+    "marketplaceID": "",
     "marketplaceName": "MultiMarketplace1",
-    "clientID": "B461789F-414B-46CF-88D0-04022DCAFB94",
-    "apiClientID": "1231789F-414B-46CF-88D0-04022DCAF123"
+    "clientID": "",
+    "apiClientID": ""
   },
   {
-    "marketplaceID": "d5eb36c2-2406-428d-b6e9-515fe8e73156",
+    "marketplaceID": "",
     "marketplaceName": "MultiMarketplace2",
-    "clientID": "B461789F-414B-46CF-88D0-04022DCAFB94",
-    "apiClientID": "1231789F-414B-46CF-88D0-04022DCAF123"
+    "clientID": "",
+    "apiClientID": ""
   }
 ]
